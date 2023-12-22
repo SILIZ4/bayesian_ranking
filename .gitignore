@@ -1,5 +1,6 @@
 data/
 figures/
+results/
 stan_models/*
 !stan_models/*.stan
 __pycache__/

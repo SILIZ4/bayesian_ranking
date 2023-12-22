@@ -1,0 +1,83 @@
+---
+title: "Bayesian rankings"
+date: "12/22/2023"
+author: "Moritz Laber, Simon Lizotte, Erik Weis"
+format:
+    revealjs:
+        theme: quarto_style.scss
+        css: [base_theme.css, specific.css]
+        slide-number: c
+        width: 1920
+        height: 1080
+        template-partials:
+          - title-slide.html
+#logos:
+    #- logos/drac.png
+    #- logos/logo-frqnt-couleur.png
+    #- logos/sentinelle_nord_logo.png
+jupyter: python3
+---
+
+## Ranking
+
+Using comparison information, e.g.
+
+- pairwise win/loss/draw (competing 1v1) or
+- group orderings ($k$ competing players),
+
+how can we estimate the *rating* of each individual?
+
+## Comparisons have a network/hypergraph structure
+
+- Vertex = players
+- (hyper)edge = match
+
+$\implies$ there are multiedges and multihyperedges.
+
+## Bayesian model
+
+For win/loss/draw:
+
+- Player's rating $R_i \sim \mathcal{N}(0, 1)$
+- Effective rating: $S_i\sim \mathcal{N}(R_i, 1)$ and
+- The outcome of a match between $i$ and $j$ is determined based on $Z_{ij}=S_i-S_j$:
+    $$\text{outcome of $i$ vs $j$ } = \begin{cases}
+        \text{draw} & \text{if } |Z_{ij}| < t,\\
+        i \text{ wins} & \text{if } Z_{ij} > t,\\
+        j \text{ wins} & \text{if } Z_{ij} < t.
+    \end{cases}
+    $$
+- Draw threshold: $t \sim \text{Exp}(1/2)$.
+
+For group orderings:
+
+- Player's rating $R_i \sim \mathcal{N}(0, 1)$.
+- Effective rating $S_i\sim \mathcal{N}(R_i, 1)$.
+- The result of a match between $i$ and $j$ is determined based the order of effective scores
+    $$\text{outcome of } (v_1, v_2, \dots, v_k) = \text{order of } (S_1, S_2, \dots, S_k),
+    $$
+
+
+## Main question
+
+Does the competition structure have an influence on the quality of rankings?
+
+e.g.
+
+- Rating assortativity --- matches involve similar ratings
+- Degree sequence (is there correlation between degree and rating?)
+
+. . .
+
+Problem: rating assortativity naturally biases the degree sequence.
+
+## Results on synthetic data
+
+![](figures/games_size_number_n=20.svg)
+
+## Comparing rankings to Spring-rank
+
+## Future (?) of the project
+
+- Bias edge probabilities using ratings, see if it helps inference
+- Answer our initial question about the impact of the network structure

@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 from scipy import stats
 
-from modeling import fit, get_scores_matrix, generate_data
+from modeling import fit_hypergraph, get_scores_matrix, generate_data
 from hypergraph import generate_uniform_hyperedges
 
 
@@ -25,7 +25,7 @@ for n_players in tqdm([10, 20, 30, 40]):
     for repetition in tqdm(range(repetitions), total=repetitions, leave=False):
         games = generate_data(scores, hyperedges, sigma)
 
-        draws = fit(games, n_players).draws_pd()
+        draws = fit_hypergraph(games, n_players).draws_pd()
 
 
         average_scores = np.average(get_scores_matrix(draws, n_players), axis=0)

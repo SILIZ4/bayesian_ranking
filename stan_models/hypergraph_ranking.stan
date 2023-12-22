@@ -6,14 +6,15 @@ data {
   array[n_players] int players;
 }
 
+transformed data {
+  real sigma = 1;
+}
+
 parameters {
   array[N] real mu;
-  real<lower=0.1> sigma;
 }
 
 model {
-  //sigma ~ gamma(2, 0.5);
-  sigma ~ exponential(2);
   mu ~ normal(0, 1);
 
   int k=2;

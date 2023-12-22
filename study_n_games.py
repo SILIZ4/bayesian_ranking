@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 from scipy import stats
 
-from modeling import (dataset_ranking_distances, fit,
+from modeling import (dataset_ranking_distances, fit_hypergraph,
                       get_scores_matrix, predict_rankings,
                       rank, generate_hyperedges, generate_data)
 
@@ -26,7 +26,7 @@ for n_games in tqdm([10, 50, 100, 500, 1000]):
     for repetition in tqdm(range(repetitions), total=repetitions, leave=False):
         games = generate_data(scores, hyperedges, sigma)
 
-        draws = fit(games, number_players).draws_pd()
+        draws = fit_hypergraph(games, number_players).draws_pd()
 
         average_scores = np.average(get_scores_matrix(draws, number_players), axis=0)
         errors.append(stats.spearmanr(average_scores, scores)[0])

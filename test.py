@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats
 
-from modeling import (ranking_distance, fit,
+from modeling import (ranking_distance, fit_hypergraph,
                       get_scores_matrix, predict_rankings,
                       rank, generate_data)
 from hypergraph import generate_binomial_assortative_hypergraph, generate_uniform_hyperedges
@@ -23,7 +23,7 @@ scores = np.random.normal(loc=0, scale=1, size=number_players)
 hyperedges = generate_uniform_hyperedges(number_players, number_games, 5)
 games = generate_data(scores, hyperedges, sigma)
 
-draws = fit(games, number_players).draws_pd()
+draws = fit_hypergraph(games, number_players).draws_pd()
 average_scores = np.median(get_scores_matrix(draws, number_players), axis=0)
 
 print(ranking_distance(rank(average_scores), rank(scores)))
@@ -42,18 +42,4 @@ for i, score  in enumerate(scores):
 
 ax.errorbar(scores, inferred_mu, yerr=std, marker="o", ls="none")
 print("sigma", np.average(draws["sigma"]))
-plt.show()
-
-exit()
-
-# Rank whole sample
-fig, ax = plt.subplots()
-
-sample_distances = []
-for sample_scores in get_scores_matrix(draws, number_players):
-    predicted_rankings = predict_rankings(sample_scores, games_rankings)
-    sample_distances.append(dataset_ranking_distances(predicted_rankings, games_rankings))
-
-ax.hist(sample_distances)
-
 plt.show()

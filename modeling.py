@@ -1,4 +1,4 @@
-from itertools import chain
+from itertools import chain, combinations
 import logging
 
 import cmdstanpy as stan
@@ -20,7 +20,30 @@ def generate_data(scores, hyperedges, sigma):
     return results
 
 
-def fit(games_rankings, number_players):
+def generate_graph(n, p, k):
+    edges = []
+    for i, j in combinations(np.arange(n), 2):
+        multiplicity = stats.binom.rvs(k, p)
+        for _ in range(multiplicity):
+            edges.append([i, j])
+    return edges
+
+
+def generate_data_with_ties(scores, edges, sigma, threshold):
+    not_draws = []
+    draws = []
+    for i, j in edges:
+        z = np.random.normal(loc=scores[i]-scores[j], scale=np.sqrt(2)*sigma)
+        if abs(z) < threshold:
+            draws.append([i, j])
+        elif z > 0:
+            not_draws.append([i, j])
+        else:
+            not_draws.append([j, i])
+    return not_draws, draws
+
+
+def fit_hypergraph(games_rankings, number_players, verbose=False):
     model = stan.CmdStanModel(stan_file="./stan_models/hypergraph_ranking.stan")
 
     flattened_games = list(map(lambda x: x+1, chain.from_iterable(games_rankings)))
@@ -31,8 +54,19 @@ def fit(games_rankings, number_players):
         "n_players": len(flattened_games),
         "N": number_players
     }
-    fit = model.sample(data=data, iter_sampling=200, show_progress=False)
-    return fit
+    return model.sample(data=data, iter_sampling=200, show_progress=verbose)
+
+
+def fit_graph(n_players, not_draws, draws, verbose=False):
+    data = {
+        "n_players": n_players,
+        "n_not_draws": len(not_draws),
+        "not_draws": not_draws,
+        "n_draws": len(draws),
+        "draws": draws,
+    }
+    model = stan.CmdStanModel(stan_file="./stan_models/graph_ranking_ties.stan")
+    return model.sample(data=data, iter_sampling=200, show_progress=verbose)
 
 
 def rank_in_game(scores, game):
