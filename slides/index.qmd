@@ -40,6 +40,7 @@ For win/loss/draw:
 
 - Player's rating $R_i \sim \mathcal{N}(0, 1)$
 - Effective rating: $S_i\sim \mathcal{N}(R_i, 1)$ and
+- Draw threshold: $t \sim \text{Exp}(1/2)$.
 - The outcome of a match between $i$ and $j$ is determined based on $Z_{ij}=S_i-S_j$:
     $$\text{outcome of $i$ vs $j$ } = \begin{cases}
         \text{draw} & \text{if } |Z_{ij}| < t,\\
@@ -47,7 +48,8 @@ For win/loss/draw:
         j \text{ wins} & \text{if } Z_{ij} < t.
     \end{cases}
     $$
-- Draw threshold: $t \sim \text{Exp}(1/2)$.
+
+. . .
 
 For group orderings:
 
@@ -67,17 +69,36 @@ e.g.
 - Rating assortativity --- matches involve similar ratings
 - Degree sequence (is there correlation between degree and rating?)
 
-. . .
-
 Problem: rating assortativity naturally biases the degree sequence.
 
-## Results on synthetic data
+## SpringRank vs Bayesian rankings on synthetic data
+
+![](./figures/synthetic_springrank_heterogeneity_sweep.svg){.absolute width=50% left=0}
+
+![](./figures/heterogeneity_graph_correlation.svg){.absolute width=50% right=0}
+
+
+## Relation with hypergraph assortativity for Bayesian model
+
+![](./figures/assortativity_hypergraph_correlation.svg)
+
+## Bayesian hypergraph rankings on synthetic data
 
 ![](figures/games_size_number_n=20.svg)
 
-## Comparing rankings to Spring-rank
-
 ## Future (?) of the project
+
+- Hockey fights rankings?
+
+. . .
 
 - Bias edge probabilities using ratings, see if it helps inference
 - Answer our initial question about the impact of the network structure
+
+Ways in which competition structure could be encoded in the graph:
+
+- Degree is correlated with rank
+- A particular (hyper)edge is composed according to rank
+- Community structure is correlated with rank
+
+![](./figures/future+work.png)
